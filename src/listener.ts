@@ -35,6 +35,7 @@ interface Context extends TCPCreateListenerOptions {
   upgrader: Upgrader
   socketInactivityTimeout?: number
   socketCloseTimeout?: number
+  publicIp?: string
 }
 
 /**
@@ -42,7 +43,7 @@ interface Context extends TCPCreateListenerOptions {
  */
 export function createListener (context: Context) {
   const {
-    handler, upgrader, socketInactivityTimeout, socketCloseTimeout
+    handler, upgrader, socketInactivityTimeout, socketCloseTimeout, publicIp = null
   } = context
 
   context.keepAlive = context.keepAlive ?? true
@@ -116,8 +117,12 @@ export function createListener (context: Context) {
         try {
           // Because TCP will only return the IPv6 version
           // we need to capture from the passed multiaddr
+
           if (listeningAddr.toString().startsWith('/ip4')) {
             addrs = addrs.concat(getMultiaddrs('ip4', address.address, address.port))
+            if (publicIp != null) {
+              addrs = addrs.concat(getMultiaddrs('ip4', publicIp, address.port))
+            }
           } else if (address.family === 'IPv6') {
             addrs = addrs.concat(getMultiaddrs('ip6', address.address, address.port))
           }

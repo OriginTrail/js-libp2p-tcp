@@ -29,6 +29,11 @@ export interface TCPOptions {
    * When closing a socket, wait this long for it to close gracefully before it is closed more forcibly
    */
   socketCloseTimeout?: number
+
+  /**
+   * Node's public ip
+   */
+  publicIp?: string
 }
 
 /**
@@ -159,7 +164,8 @@ export class TCP implements Transport {
     return createListener({
       ...options,
       socketInactivityTimeout: this.opts.inboundSocketInactivityTimeout,
-      socketCloseTimeout: this.opts.socketCloseTimeout
+      socketCloseTimeout: this.opts.socketCloseTimeout,
+      publicIp: this.opts.publicIp
     })
   }
 
